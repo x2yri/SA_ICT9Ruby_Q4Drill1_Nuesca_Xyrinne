@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sakura Railways</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink-soft:#ffd6ea;--pink-mid:#f5b8d5;--pink-btn:#f0adc8;
+  --pink-hover:#eabdd0;--pink-light:#ffeaf4;--pink-pale:#fff5f8;--pink-bg:#fff0f6;
+}
+body{font-family:'Times New Roman',Times,serif;margin:0;background:white;}
+
+.nav-link{font-size:22px;cursor:pointer;}
+.top-link{font-size:18px;color:#444;text-decoration:none;cursor:pointer;}
+.top-link:hover{color:var(--pink-btn);text-decoration:underline;}
+.search-input{border-radius:30px;border:1px solid var(--pink-soft);padding:8px 20px;width:250px;}
+.search-input:focus{outline:none;box-shadow:none;border-color:var(--pink-soft);}
+.login-btn{border:1px solid var(--pink-soft);border-radius:20px;padding:6px 14px;background:white;cursor:pointer;color:#666;transition:background .2s;}
+.login-btn:hover{background:var(--pink-pale);color:var(--pink-btn);}
+.side-menu{position:fixed;top:0;left:-260px;height:100%;width:260px;background:var(--pink-bg);border-right:1px solid var(--pink-soft);padding:40px 20px;transition:.3s ease;z-index:999;}
+.side-menu.active{left:0;}
+.side-menu .close-btn{font-size:28px;cursor:pointer;display:block;margin-bottom:30px;}
+.side-menu a{display:block;margin-bottom:20px;color:#444;text-decoration:none;cursor:pointer;}
+.side-menu a:hover{color:var(--pink-btn);text-decoration:underline;}
+.navbar{
+  background:white;
+  padding:20px 40px 35px 40px; 
+  position:relative;
+}
+
+.navbar::after{
+  content:"";
+  position:absolute;
+  left:0;
+  bottom:-15px;  
+  width:100%;
+  height:25px;
+  background:linear-gradient(to bottom, rgba(0,0,0,0.08), transparent);
+  pointer-events:none;
+}
+#home{
+  background:linear-gradient(#fff,#ffeaf4);
+  min-height:440px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;padding:80px 20px 60px;
+}
+#home h1{font-family:'Pinyon Script',cursive;font-size:78px;margin:0;color:#1a1a1a;}
+#home p#tagline{font-size:20px;color:rgba(60,20,40,0.55);margin-top:10px;letter-spacing:1px;font-style:italic;}
+
+#welcome-section{background:white;padding:55px 20px 50px;text-align:center;}
+#welcome-section p.cursive{font-family:'Pinyon Script',cursive;font-size:46px;color:#111;margin:0;}
+#welcome-section p.description{color:#555;font-size:16px;max-width:780px;margin:22px auto 0;line-height:1.9;}
+
+#fare{display:none;padding:30px;text-align:center;}
+#fare .title-box{margin:0 auto 20px;max-width:900px;padding-left:30px;}
+#fare .main-title{font-family:'Pinyon Script',cursive;font-size:55px;font-weight:normal;color:#111;margin-bottom:20px;}
+#fare input{width:40%;padding:8px;font-size:16px;border-radius:30px;border:1px solid var(--pink-soft);text-align:center;margin-top:10px;outline:none;}
+#fare input:focus{border-color:var(--pink-soft);box-shadow:none;}
+#fare button{margin-top:10px;padding:6px 20px;font-size:16px;border-radius:20px;background:var(--pink-btn);border:none;color:white;cursor:pointer;transition:background .2s;}
+#fare button:hover{background:var(--pink-hover);}
+#fare .fare-table{width:100%;max-width:900px;margin:20px auto 0;border-collapse:collapse;font-size:18px;}
+#fare .fare-table th,#fare .fare-table td{border:1px solid var(--pink-light);padding:12px;color:#444;}
+#fare .fare-table th{background:var(--pink-pale);font-weight:normal;}
+#fare .fare-table tr:nth-child(even){background:#fffbfd;}
+#fare .fare-table tr:hover{background:var(--pink-light);transition:.2s;}
+#fare .fare-footer{font-size:14px;color:var(--pink-mid);margin-top:20px;}
+
+.registration-container{width:100%;padding:20px 30px 10px;background:white;}
+.registration-container .cursive-title{font-family:'Pinyon Script',cursive;font-size:32px;text-align:center;margin-bottom:20px;color:var(--pink-btn);}
+.profile-box{width:150px;height:150px;border-radius:50%;background:var(--pink-bg);margin:auto;overflow:hidden;display:flex;align-items:center;justify-content:center;position:relative;cursor:grab;}
+.profile-box img{width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;}
+.submit-btn{border-radius:20px!important;font-size:18px;background:var(--pink-btn)!important;border:none!important;transition:background .2s!important;}
+.submit-btn:hover{background:var(--pink-hover)!important;}
+#message{font-weight:500;color:var(--pink-btn);}
+
+#regSuccess{display:none;text-align:center;padding:50px 20px 40px;}
+#regSuccess .success-icon{font-size:64px;margin-bottom:14px;}
+#regSuccess h2{font-family:'Pinyon Script',cursive;font-size:46px;color:#333;margin-bottom:10px;}
+#regSuccess p{color:#777;font-size:15px;margin-bottom:30px;line-height:1.8;max-width:340px;margin-left:auto;margin-right:auto;}
+#regSuccess .home-btn{border:none;border-radius:24px;background:var(--pink-btn);color:white;padding:12px 38px;font-size:16px;cursor:pointer;transition:background .2s;}
+#regSuccess .home-btn:hover{background:var(--pink-hover);}
+
+#schedule{display:none;padding:20px;background:var(--pink-pale);overflow-x:auto;scroll-snap-type:x mandatory;}
+#schedule .container-wrapper{display:flex;gap:30px;padding:40px;flex-wrap:nowrap;min-width:800px;}
+#schedule .board,#schedule .calendar{scroll-snap-align:start;background:white;border-radius:20px;box-shadow:0 10px 30px rgba(232,96,154,0.08);}
+#schedule .board{flex:3;min-width:700px;padding:50px;}
+#schedule .title{font-family:'Pinyon Script',cursive;font-size:70px;margin-bottom:40px;color:#333;}
+#schedule .table-header{display:grid;grid-template-columns:120px 2fr 120px;border-bottom:1px solid var(--pink-soft);padding-bottom:15px;font-weight:bold;letter-spacing:1px;}
+#schedule .row-item{display:grid;grid-template-columns:120px 2fr 120px;padding:15px 0;border-bottom:1px solid var(--pink-light);font-size:16px;}
+#schedule .status{text-align:right;color:var(--pink-btn);}
+#schedule .calendar{flex:1;min-width:250px;padding:20px;display:flex;flex-direction:column;align-items:center;}
+#schedule .calendar-header{display:flex;justify-content:space-between;width:100%;margin-bottom:10px;font-weight:bold;font-size:14px;}
+#schedule .calendar-header button{background:none;border:none;font-size:16px;cursor:pointer;color:var(--pink-btn);}
+#schedule .calendar table{width:100%;border-collapse:collapse;text-align:center;font-size:12px;}
+#schedule .calendar th,#schedule .calendar td{padding:5px;}
+#schedule .calendar td:hover{background:var(--pink-light);border-radius:5px;cursor:pointer;}
+
+#map-section{display:none;padding:40px 20px;text-align:center;background:white;border-top:1px solid var(--pink-light);}
+#map-section .map-title{font-family:'Pinyon Script',cursive;font-size:48px;color:#333;margin-bottom:8px;}
+#map-section .map-sub{color:var(--pink-mid);font-size:15px;margin-bottom:24px;letter-spacing:1px;}
+#map-section iframe{width:95%;max-width:1100px;height:580px;border-radius:20px;box-shadow:0 10px 30px rgba(232,96,154,.10);border:1px solid var(--pink-soft);}
+
+#booking{display:none;padding:50px 20px;background:var(--pink-pale);}
+#booking .booking-title{font-family:'Pinyon Script',cursive;font-size:55px;color:#333;text-align:center;margin-bottom:8px;}
+#booking .booking-sub{text-align:center;color:var(--pink-mid);font-size:15px;letter-spacing:1px;margin-bottom:32px;}
+#booking .booking-card{max-width:680px;margin:0 auto;background:white;border-radius:20px;padding:40px;box-shadow:0 8px 30px rgba(232,96,154,.10);border:1px solid var(--pink-light);}
+#booking label{color:#555;font-size:15px;display:block;margin-bottom:6px;}
+#booking select,#booking input[type=date],#booking input[type=number]{width:100%;padding:10px 16px;font-size:15px;border-radius:30px;border:1px solid var(--pink-soft);outline:none;background:white;margin-bottom:18px;color:#444;font-family:'Times New Roman',Times,serif;}
+#booking select:focus,#booking input:focus{border-color:var(--pink-mid);}
+#booking .fare-preview{background:var(--pink-bg);border-radius:14px;padding:18px 24px;margin:10px 0 20px;font-size:16px;color:var(--pink-btn);text-align:center;min-height:52px;}
+#booking .book-btn{width:100%;padding:12px;font-size:18px;border-radius:30px;background:var(--pink-btn);border:none;color:white;cursor:pointer;letter-spacing:1px;transition:background .2s;}
+#booking .book-btn:hover{background:var(--pink-hover);}
+#booking .book-note{font-size:13px;color:var(--pink-mid);text-align:center;margin-top:14px;}
+#booking .passenger-row{display:flex;gap:16px;}
+#booking .passenger-row>div{flex:1;}
+
+#dining{display:none;padding:0;background:var(--pink-pale);}
+.dining-wrap{font-family:'IM Fell English',Georgia,serif;display:flex;flex-direction:column;align-items:center;padding:40px 16px 60px;}
+.dining-page{width:100%;max-width:780px;background:white;border:1px solid var(--pink-light);border-radius:18px;overflow:hidden;box-shadow:0 8px 36px rgba(255,174,210,.10);}
+.dining-header{background:white;border-bottom:1px solid var(--pink-soft);text-align:center;padding:26px 20px 18px;}
+.dining-badge{display:inline-block;background:var(--pink-pale);border-radius:30px;font-size:11px;letter-spacing:2px;color:var(--pink-mid);padding:3px 16px;margin-bottom:8px;}
+.dining-header h1{font-family:'Pinyon Script',cursive;font-size:56px;color:#333;font-weight:normal;margin:0;line-height:1;}
+.dining-sub{font-size:12px;color:var(--pink-mid);letter-spacing:2px;text-transform:uppercase;margin:5px 0 8px;}
+.dining-divider{display:flex;align-items:center;justify-content:center;gap:8px;padding:4px 20px;font-size:12px;color:#e8b8cc;letter-spacing:3px;}
+.dining-divider::before,.dining-divider::after{content:'';flex:1;height:1px;background:linear-gradient(to right,transparent,var(--pink-soft));}
+.dining-divider::after{background:linear-gradient(to left,transparent,var(--pink-soft));}
+.period-tabs{display:flex;justify-content:center;background:white;border-bottom:2px solid var(--pink-light);}
+.period-tab{flex:1;padding:10px 0;text-align:center;background:white;color:var(--pink-mid);cursor:pointer;border:none;transition:.2s;font-family:'Pinyon Script',cursive;font-size:20px;border-bottom:2px solid transparent;margin-bottom:-2px;}
+.period-tab:hover{color:var(--pink-btn);}
+.period-tab.active{color:var(--pink-btn);border-bottom:2px solid var(--pink-soft);}
+.cat-tabs{display:flex;justify-content:center;gap:8px;padding:10px 20px;background:white;border-bottom:1px solid var(--pink-light);flex-wrap:wrap;}
+.cat-tab{border:1px solid var(--pink-light);border-radius:30px;padding:4px 16px;font-size:12px;letter-spacing:1px;background:white;color:var(--pink-mid);cursor:pointer;transition:.2s;font-family:'IM Fell English',serif;}
+.cat-tab:hover{background:var(--pink-pale);color:var(--pink-btn);}
+.cat-tab.active{background:var(--pink-soft);border:none;color:#a04060;}
+.menu-body{display:grid;grid-template-columns:1fr 1fr;}
+.left-col,.right-col{display:flex;flex-direction:column;}
+.menu-section{padding:18px 20px;border-bottom:1px solid var(--pink-light);}
+.left-col .menu-section{border-right:1px solid var(--pink-light);}
+.section-title{font-family:'Pinyon Script',cursive;font-size:32px;color:#f0a0c0;margin:0 0 10px;font-weight:normal;}
+.item-row{border-bottom:1px dashed var(--pink-light);padding:9px 6px;cursor:pointer;transition:background .15s;border-radius:8px;}
+.item-row:last-child{border-bottom:none;}
+.item-row:hover{background:#fff8fb;}
+.item-row.hidden{display:none;}
+.item-top{display:flex;justify-content:space-between;align-items:baseline;}
+.item-name{font-size:14px;font-weight:bold;color:#444;letter-spacing:.5px;}
+.item-ja{font-size:11px;color:var(--pink-mid);margin-top:1px;font-style:italic;}
+.item-price{font-size:13px;font-weight:bold;color:#a04060;white-space:nowrap;margin-left:8px;background:var(--pink-bg);border:none;border-radius:20px;padding:1px 10px;}
+.item-desc{font-size:11px;color:#bbb;margin-top:3px;line-height:1.5;font-style:italic;}
+.item-tags{margin-top:5px;display:flex;gap:4px;flex-wrap:wrap;}
+.tag{font-size:10px;border-radius:10px;padding:1px 8px;border:none;}
+.tag-hot{background:#fff8f2;color:#f0b898;}.tag-cold{background:#f0f8ff;color:#a0c0e0;}
+.tag-veg{background:#f2faf2;color:#a0c8a0;}.tag-sweet{background:#fff5f9;color:#f0a8c4;}
+.tag-new{background:#faf4ff;color:#c8a8e0;}.tag-sig{background:#fffdf2;color:#d8c890;}
+.special-frame{margin:4px 0 8px;border:1px solid var(--pink-light);border-radius:14px;padding:10px 12px;background:#fff8fb;position:relative;}
+.special-frame::before{content:'';position:absolute;inset:-4px;border:1.5px dashed var(--pink-soft);border-radius:18px;pointer-events:none;}
+.dining-footer{background:linear-gradient(var(--pink-pale),white);border-top:1px solid var(--pink-light);text-align:center;padding:12px 20px;font-size:11px;color:var(--pink-mid);letter-spacing:1px;font-family:'IM Fell English',serif;}
+
+.ing-overlay{display:none;position:fixed;inset:0;background:rgba(255,174,210,.18);z-index:2000;align-items:center;justify-content:center;}
+.ing-overlay.show{display:flex;}
+.ing-modal{background:white;border:1px solid var(--pink-light);border-radius:24px;padding:32px 28px 28px;max-width:400px;width:90%;box-shadow:0 10px 40px rgba(255,174,210,.14);position:relative;text-align:center;}
+.close-x{position:absolute;top:12px;right:16px;font-size:20px;color:var(--pink-mid);background:none;border:none;cursor:pointer;}
+.close-x:hover{color:var(--pink-btn);}
+.m-title{font-family:'Pinyon Script',cursive;font-size:38px;color:#f0a0c0;margin:4px 0 2px;font-weight:normal;}
+.m-ja{font-size:12px;color:var(--pink-mid);font-style:italic;margin-bottom:8px;}
+.m-price{display:inline-block;background:var(--pink-bg);border:none;border-radius:20px;padding:2px 14px;font-size:14px;color:#a04060;margin-bottom:10px;}
+.m-desc{font-size:13px;color:#999;margin-bottom:14px;line-height:1.6;font-style:italic;}
+.ing-list{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-bottom:12px;}
+.ing-chip{background:var(--pink-pale);border:none;border-radius:20px;padding:3px 12px;font-size:12px;color:#bbb;}
+.allergen{font-size:11px;color:#ddd;border-top:1px solid var(--pink-light);padding-top:10px;}
+
+#autoPopup{display:none;position:fixed;inset:0;background:rgba(255,180,215,.32);z-index:3000;align-items:center;justify-content:center;}
+#autoPopup.show{display:flex;}
+.auto-modal{background:white;border:1px solid var(--pink-soft);border-radius:24px;padding:38px 42px 30px;max-width:500px;width:92%;box-shadow:0 16px 60px rgba(255,140,190,.18);position:relative;text-align:center;animation:popIn .4s cubic-bezier(.34,1.56,.64,1);}
+@keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.close-auto{position:absolute;top:14px;right:18px;font-size:22px;color:var(--pink-mid);background:none;border:none;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+<div class="container-fluid d-flex align-items-center">
+  <a class="nav-link me-4" onclick="toggleMenu()">=</a>
+  <form class="me-4" onsubmit="return false;"><input class="search-input" type="text" id="searchBox" placeholder="検索..."></form>
+  <div class="d-flex justify-content-center align-items-center gap-4 flex-grow-1">
+    <a class="top-link" id="homeLink"     onclick="showSection('home')">ホーム</a>
+    <a class="top-link" id="fareLink"     onclick="showSection('fare')">運賃表</a>
+    <a class="top-link" id="scheduleLink" onclick="showSection('schedule')">スケジュール</a>
+    <a class="top-link" id="diningLink"   onclick="showSection('dining')">Dining</a>
+    <a class="top-link" id="bookingLink"  onclick="showSection('booking')">Booking</a>
+  </div>
+  <button class="login-btn ms-3" id="loginBtn" onclick="showLoginModal()"><i class="bi bi-person"></i> ログイン</button>
+  <button class="login-btn ms-2" id="langBtn" onclick="toggleLanguage()">EN</button>
+</div>
+</nav>
+
+<div class="side-menu" id="menu">
+  <span class="close-btn" onclick="toggleMenu()">×</span>
+  <a onclick="comingSoon()" id="helpLink">ヘルプ</a>
+  <a onclick="comingSoon()" id="contactLink">お問い合わせ</a>
+  <a onclick="comingSoon()" id="aboutLink">会社情報</a>
+</div>
+
+<div id="home">
+  <h1>Sakura Railways</h1>
+  <p id="tagline">さくら鉄道 – where every journey blooms</p>
+</div>
+
+<div id="welcome-section">
+  <p class="cursive" id="welcomeTitle">Welcome to Sakura Railways</p>
+  <p class="description" id="welcomeDesc">さくら鉄道へようこそ。私たちは快適さ、安全性、そして心のこもったサービスを大切にしています。東京から京都、大阪から広島、北海道まで、日本の美しい景色を車窓から楽しみながら、優雅な旅をお届けします。最新の車両設備、丁寧に選ばれたオンボードダイニング、そして専任のスタッフが皆様の旅を特別なものにします。家族連れ、カップル、出張のビジネスパーソンまで、すべての旅人に寄り添う鉄道です。毎日の通勤も、特別な旅行も、さくら鉄道と共に、心に残る旅の思い出を。</p>
+</div>
+
+<div id="fare">
+  <div class="title-box"><div class="main-title">Fare Matrix</div></div>
+  <input type="text" id="fareInput" placeholder="目的地を入力">
+  <table class="fare-table">
+    <thead><tr>
+      <th id="routeHeader">ルート</th><th id="fareHeader">運賃 (¥)</th>
+      <th id="studentHeader">学生割引 (¥)</th><th id="pwdHeader">PWD割引 (¥)</th>
+    </tr></thead>
+    <tbody id="fareOutput"></tbody>
+  </table>
+  <button id="checkFareBtn" onclick="showFare()">運賃を確認</button>
+  <div class="fare-footer" id="fareFooter">*価格は目安です。</div>
+</div>
+
+<div id="schedule">
+  <div class="container-wrapper">
+    <div class="board">
+      <div class="title" id="schedTitle">Station Schedule</div>
+      <div class="table-header">
+        <div id="colDepart">Depart</div><div id="colRoute">Route</div><div style="text-align:right" id="colStatus">Status</div>
+      </div>
+      <div class="row-item"><div>07:30</div><div id="r1">東京→京都 | Tokyo → Kyoto</div><div class="status" id="s1">Boarding</div></div>
+      <div class="row-item"><div>08:15</div><div id="r2">大阪→広島 | Osaka → Hiroshima</div><div class="status" id="s2">Open</div></div>
+      <div class="row-item"><div>09:00</div><div id="r3">京都→奈良 | Kyoto → Nara</div><div class="status" id="s3">On Time</div></div>
+      <div class="row-item"><div>10:20</div><div id="r4">東京→大阪 | Tokyo → Osaka</div><div class="status" id="s4">Delayed</div></div>
+      <div class="row-item"><div>11:45</div><div id="r5">北海道→東京 | Hokkaido → Tokyo</div><div class="status" id="s5">Open</div></div>
+      <div class="row-item"><div>13:00</div><div id="r6">東京→京都 | Tokyo → Kyoto</div><div class="status" id="s6">On Time</div></div>
+      <div class="row-item"><div>15:30</div><div id="r7">大阪→東京 | Osaka → Tokyo</div><div class="status" id="s7">Open</div></div>
+      <div class="row-item"><div>17:00</div><div id="r8">京都→大阪 | Kyoto → Osaka</div><div class="status" id="s8">Boarding</div></div>
+      <div class="row-item"><div>19:15</div><div id="r9">東京→北海道 | Tokyo → Hokkaido</div><div class="status" id="s9">Open</div></div>
+      <div class="row-item"><div>21:00</div><div id="r10">広島→京都 | Hiroshima → Kyoto</div><div class="status" id="s10">On Time</div></div>
+    </div>
+    <div class="calendar">
+      <div class="calendar-header">
+        <button id="prevMonth">&lt;</button><div id="monthYear"></div><button id="nextMonth">&gt;</button>
+      </div>
+      <table id="calendarTable"></table>
+    </div>
+  </div>
+</div>
+
+<div id="map-section">
+  <div class="map-title" id="mapTitle">Station Map</div>
+  <div class="map-sub" id="mapSub">Tokyo Station &mdash; JR East</div>
+  <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=139.7571%2C35.6790%2C139.7731%2C35.6870&layer=mapnik&marker=35.6812%2C139.7671" allowfullscreen loading="lazy"></iframe>
+</div>
+
+<div id="dining">
+  <div class="dining-wrap">
+    <div class="dining-page">
+      <div class="dining-header">
+        <div class="dining-badge" id="diningBadge">NOW SERVING &mdash; SAKURA RAILWAYS</div>
+        <h1 id="diningTitle">On-Board Dining</h1>
+        <div class="dining-sub" id="diningSub">車内ダイニング &mdash; freshly prepared for your journey</div>
+        <div class="dining-divider">~ Special Menu ~</div>
+      </div>
+      <div class="period-tabs">
+        <button class="period-tab active" id="tabBreakfast" onclick="switchPeriod('breakfast',this)">Breakfast</button>
+        <button class="period-tab" id="tabLunch" onclick="switchPeriod('lunch',this)">Lunch</button>
+        <button class="period-tab" id="tabDinner" onclick="switchPeriod('dinner',this)">Dinner</button>
+      </div>
+      <div class="cat-tabs" id="catTabs"></div>
+      <div class="menu-body">
+        <div class="left-col" id="leftCol"></div>
+        <div class="right-col" id="rightCol"></div>
+      </div>
+      <div class="dining-footer" id="diningFooter">Sakura Railways &nbsp;|&nbsp; All prices include tax &nbsp;|&nbsp; Items subject to availability</div>
+    </div>
+  </div>
+</div>
+
+<div id="booking">
+  <div class="booking-title" id="bookingTitle">Book a Journey</div>
+  <div class="booking-sub" id="bookingSub">さくら鉄道でご旅行をご予約ください</div>
+  <div class="booking-card">
+    <label id="pickupLabel">Pickup Station</label>
+    <select id="pickupSelect" onchange="calcBookingFare()">
+      <option value="" id="pickupDefault">-- Select pickup station --</option>
+      <option value="東京">東京 (Tokyo)</option><option value="大阪">大阪 (Osaka)</option>
+      <option value="京都">京都 (Kyoto)</option><option value="北海道">北海道 (Hokkaido)</option>
+    </select>
+    <label id="dropoffLabel">Drop-off Station</label>
+    <select id="dropoffSelect" onchange="calcBookingFare()">
+      <option value="" id="dropoffDefault">-- Select drop-off station --</option>
+      <option value="京都">京都 (Kyoto)</option><option value="広島">広島 (Hiroshima)</option>
+      <option value="奈良">奈良 (Nara)</option><option value="大阪">大阪 (Osaka)</option>
+      <option value="東京">東京 (Tokyo)</option><option value="北海道">北海道 (Hokkaido)</option>
+    </select>
+    <label id="dateLabel">Travel Date</label>
+    <input type="date" id="travelDate">
+    <div class="passenger-row">
+      <div><label id="passLabel">Passengers</label><input type="number" id="numPassengers" min="1" max="10" value="1" onchange="calcBookingFare()"></div>
+      <div>
+        <label id="discountLabel">Discount Type</label>
+        <select id="discountType" onchange="calcBookingFare()">
+          <option value="none" id="discNone">None</option>
+          <option value="student" id="discStudent">Student (20% off)</option>
+          <option value="pwd" id="discPwd">PWD (50% off)</option>
+        </select>
+      </div>
+    </div>
+    <div class="fare-preview" id="farePreview">Select pickup and drop-off to see fare estimate.</div>
+    <button class="book-btn" id="bookBtn" onclick="confirmBooking()">Book Now</button>
+    <div class="book-note" id="bookNote">*All fares include tax. Subject to availability.</div>
+  </div>
+</div>
+
+<div class="modal fade" id="loginModal" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered modal-lg">
+<div class="modal-content" style="border-radius:20px;border:1px solid var(--pink-soft);">
+  <div class="modal-header" style="border-bottom:1px solid var(--pink-light);">
+    <h5 class="modal-title" id="modalTitle" style="font-family:'Pinyon Script',cursive;color:var(--pink-btn);font-size:26px;">アカウント作成 / ログイン</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  </div>
+  <div class="modal-body p-0">
+    <div id="regFormWrap">
+      <div class="registration-container">
+        <div class="cursive-title" id="modalCursive">アカウント作成</div>
+        <div class="text-center mt-2">
+          <div class="profile-box mb-3" id="profilePreview"><span style="color:var(--pink-mid);font-size:13px;" id="profileLabel">プロフィール</span></div>
+          <input type="file" id="profileInput" class="form-control w-50 mx-auto mb-4">
+        </div>
+        <form id="registerForm">
+          <div class="row g-2 mb-2">
+            <div class="col"><input type="text" class="form-control" placeholder="名" required style="border-radius:20px;border:1px solid var(--pink-soft);"></div>
+            <div class="col"><input type="text" class="form-control" placeholder="姓" required style="border-radius:20px;border:1px solid var(--pink-soft);"></div>
+          </div>
+          <input type="number" class="form-control mb-2" placeholder="年齢" id="age" required style="border-radius:20px;border:1px solid var(--pink-soft);">
+          <input type="text" class="form-control mb-2" placeholder="連絡先番号" required style="border-radius:20px;border:1px solid var(--pink-soft);">
+          <input type="email" class="form-control mb-2" placeholder="メール" required style="border-radius:20px;border:1px solid var(--pink-soft);">
+          <input type="text" class="form-control mb-2" placeholder="ユーザー名" required style="border-radius:20px;border:1px solid var(--pink-soft);">
+          <input type="password" class="form-control mb-2" placeholder="パスワード" required style="border-radius:20px;border:1px solid var(--pink-soft);">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="terms" style="border-color:var(--pink-soft);">
+            <label class="form-check-label" id="termsLabel" style="color:#555;">利用規約に同意します</label>
+          </div>
+          <button type="submit" class="btn w-100 submit-btn" id="submitRegBtn" style="color:white;">アカウント作成</button>
+        </form>
+        <div id="message" class="mt-2 text-center"></div>
+      </div>
+    </div>
+    <div id="regSuccess">
+      <div class="success-icon"></div>
+      <h2 id="successTitle">Registration Complete!</h2>
+      <p id="successMsg">Your account has been created. Enjoy seamless journeys across Japan!</p>
+      <button class="home-btn" id="successHomeBtn" onclick="afterRegistration()">Back to Home</button>
+    </div>
+  </div>
+</div></div></div>
+
+<div class="modal fade" id="confirmModal" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+<div class="modal-content" style="border-radius:20px;border:1px solid var(--pink-soft);">
+  <div class="modal-header" style="border-bottom:1px solid var(--pink-light);background:var(--pink-pale);border-radius:20px 20px 0 0;">
+    <h5 class="modal-title" id="confirmTitle" style="font-family:'Pinyon Script',cursive;font-size:28px;color:var(--pink-btn);">Booking Confirmation</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+  </div>
+  <div class="modal-body" style="padding:28px;"><div id="confirmDetails"></div></div>
+  <div class="modal-footer" style="border-top:1px solid var(--pink-light);">
+    <button class="btn" id="confirmBookBtn" style="border-radius:20px;background:var(--pink-btn);border:none;color:white;padding:8px 24px;" data-bs-dismiss="modal">Confirm Booking</button>
+    <button class="btn" id="cancelBookBtn" style="border-radius:20px;border:1px solid var(--pink-soft);color:var(--pink-btn);" data-bs-dismiss="modal">Cancel</button>
+  </div>
+</div></div></div>
+
+<div id="autoPopup">
+  <div class="auto-modal">
+    <button class="close-auto" onclick="closeAutoPopup()">×</button>
+    <div style="font-size:44px;margin-bottom:10px;"></div>
+    <h3 id="autoTitle" style="font-family:'Pinyon Script',cursive;font-size:36px;color:#333;margin:0 0 8px;">Welcome to Sakura Railways</h3>
+    <p id="autoSub" style="color:#999;font-size:14px;margin:0 0 22px;line-height:1.6;">Create your account to book journeys and enjoy exclusive member benefits.</p>
+    <button id="autoSignupBtn" onclick="openFullLogin()" style="width:100%;border-radius:24px;background:var(--pink-btn);border:none;color:white;padding:12px;font-size:16px;margin-bottom:10px;cursor:pointer;transition:background .2s;" onmouseover="this.style.background='var(--pink-hover)'" onmouseout="this.style.background='var(--pink-btn)'">Create Account / Sign In</button>
+    <button id="autoSkipBtn" onclick="closeAutoPopup()" style="width:100%;border-radius:24px;border:1px solid var(--pink-soft);color:var(--pink-mid);background:white;padding:10px;font-size:14px;cursor:pointer;">Maybe Later</button>
+  </div>
+</div>
+
+<div class="ing-overlay" id="ingOverlay" onclick="closeOverlay(event)">
+  <div class="ing-modal">
+    <button class="close-x" onclick="closeModalBtn()">&#215;</button>
+    <div class="m-title" id="mTitle"></div>
+    <div class="m-ja" id="mJa"></div>
+    <div class="m-price" id="mPrice"></div>
+    <div class="m-desc" id="mDesc"></div>
+    <div class="ing-list" id="mIngredients"></div>
+    <div id="mTags" style="margin-bottom:10px;display:flex;gap:5px;flex-wrap:wrap;justify-content:center;"></div>
+    <div class="allergen" id="mAllergen"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+let lang = 'ja';
+const T = {
+  ja:{
+    home:'ホーム',fare:'運賃表',schedule:'スケジュール',dining:'ダイニング',booking:'予約',
+    login:'ログイン',account:'アカウント',langToggle:'EN',search:'検索...',
+    help:'ヘルプ',contact:'お問い合わせ',about:'会社情報',
+    tagline:'さくら鉄道 – where every journey blooms',
+    welcomeTitle:'Welcome to Sakura Railways',
+    welcomeDesc:'さくら鉄道へようこそ。私たちは快適さ、安全性、そして心のこもったサービスを大切にしています。東京から京都、大阪から広島、北海道まで、日本の美しい景色を車窓から楽しみながら、優雅な旅をお届けします。最新の車両設備、丁寧に選ばれたオンボードダイニング、そして専任のスタッフが皆様の旅を特別なものにします。家族連れ、カップル、出張のビジネスパーソンまで、すべての旅人に寄り添う鉄道です。',
+    farePh:'目的地を入力',routeH:'ルート',fareH:'運賃 (¥)',studentH:'学生割引 (¥)',pwdH:'PWD割引 (¥)',
+    checkFare:'運賃を確認',fareFooter:'*価格は目安です。',noRoute:'該当ルートが見つかりません。',
+    modalTitle:'アカウント作成 / ログイン',modalCursive:'アカウント作成',profileLbl:'プロフィール',
+    termsLbl:'利用規約に同意します',submitBtn:'アカウント作成',
+    ageAlert:'18歳以上である必要があります。',termsAlert:'規約に同意してください。',
+    successTitle:'登録完了！',successMsg:'さくら鉄道へようこそ。アカウントが正常に作成されました！日本全国の旅をお楽しみください。',successHomeBtn:'ホームへ戻る',
+    pickupLbl:'乗車駅',dropoffLbl:'降車駅',dateLbl:'旅行日',passLbl:'乗客数',discLbl:'割引タイプ',
+    discNone:'なし',discStudent:'学生 (20%割引)',discPwd:'PWD (50%割引)',
+    bookBtn:'今すぐ予約',bookNote:'*全運賃は税込。空席状況による。',
+    farePreviewDef:'乗車駅と降車駅を選択してください。',
+    sameStation:'乗車駅と降車駅が同じです。',fareNA:'このルートの運賃は現在ご利用いただけません。',
+    selectSt:'乗車駅と降車駅を選択してください。',selectDate:'旅行日を選択してください。',
+    confirmTitle:'予約確認',from:'乗車駅',to:'降車駅',date:'旅行日',pax:'乗客数',
+    confirmBook:'予約を確定',cancel:'キャンセル',
+    schedTitle:'Station Schedule',colDepart:'出発',colRoute:'ルート',colStatus:'状態',
+    mapTitle:'駅マップ',mapSub:'東京駅 — JR東日本',
+    diningBadge:'NOW SERVING — SAKURA RAILWAYS',diningTitle:'On-Board Dining',
+    diningSub:'車内ダイニング — お旅のために丁寧に準備されました',
+    diningFooter:'さくら鉄道 | 全価格は税込 | 提供状況により変動します',
+    tabBreakfast:'朝食',tabLunch:'昼食',tabDinner:'夕食',
+    pickupDef:'-- 乗車駅を選択 --',dropoffDef:'-- 降車駅を選択 --',
+    bookingTitle:'旅をご予約ください',bookingSub:'さくら鉄道でご旅行をご予約ください',
+    autoTitle:'さくら鉄道へようこそ',autoSub:'アカウントを作成して旅を予約し、会員限定特典をお楽しみください。',
+    autoSignup:'アカウント作成 / ログイン',autoSkip:'後で',comingSoon:'近日公開！',
+    perPerson:'/人',totalLbl:'合計',passengerUnit:'名',
+    s_boarding:'乗車中',s_open:'受付中',s_ontime:'定刻',s_delayed:'遅延',
+    days:['日','月','火','水','木','金','土'],
+    months:['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+  },
+  en:{
+    home:'Home',fare:'Fare Matrix',schedule:'Schedule',dining:'Dining',booking:'Booking',
+    login:'Login',account:'Account',langToggle:'JP',search:'Search...',
+    help:'Help',contact:'Contact Us',about:'About Us',
+    tagline:'さくら鉄道 – where every journey blooms',
+    welcomeTitle:'Welcome to Sakura Railways',
+    welcomeDesc:'Welcome to Sakura Railways. We are dedicated to comfort, safety, and heartfelt service on every journey. From Tokyo to Kyoto, Osaka to Hiroshima, and all the way to Hokkaido, we bring you elegant travel with breathtaking scenery rolling past your window. Our modern carriages feature the latest amenities, a carefully curated on-board dining experience, and a dedicated staff committed to making every trip memorable. Whether travelling with family, on a romantic getaway, or a business trip — every mile is made more beautiful with Sakura Railways.',
+    farePh:'Enter destination',routeH:'Route',fareH:'Fare (¥)',studentH:'Student Fare (¥)',pwdH:'PWD Fare (¥)',
+    checkFare:'Check Fare',fareFooter:'*Fares are approximate.',noRoute:'No matching routes found.',
+    modalTitle:'Create Account / Login',modalCursive:'Create Account',profileLbl:'Profile Photo',
+    termsLbl:'I agree to the Terms of Service',submitBtn:'Create Account',
+    ageAlert:'You must be at least 18 years old.',termsAlert:'You must accept the terms.',
+    successTitle:'Registration Complete!',successMsg:'Welcome aboard Sakura Railways. Your account has been created successfully. Enjoy seamless journeys across Japan!',successHomeBtn:'Back to Home',
+    pickupLbl:'Pickup Station',dropoffLbl:'Drop-off Station',dateLbl:'Travel Date',passLbl:'Passengers',discLbl:'Discount Type',
+    discNone:'None',discStudent:'Student (20% off)',discPwd:'PWD (50% off)',
+    bookBtn:'Book Now',bookNote:'*All fares include tax. Subject to availability.',
+    farePreviewDef:'Select pickup and drop-off to see fare estimate.',
+    sameStation:'Pickup and drop-off cannot be the same.',fareNA:'Fare not available for this route.',
+    selectSt:'Please select pickup and drop-off stations.',selectDate:'Please select a travel date.',
+    confirmTitle:'Booking Confirmation',from:'From',to:'To',date:'Date',pax:'Passengers',
+    confirmBook:'Confirm Booking',cancel:'Cancel',
+    schedTitle:'Station Schedule',colDepart:'Depart',colRoute:'Route',colStatus:'Status',
+    mapTitle:'Station Map',mapSub:'Tokyo Station — JR East',
+    diningBadge:'NOW SERVING — SAKURA RAILWAYS',diningTitle:'On-Board Dining',
+    diningSub:'車内ダイニング — freshly prepared for your journey',
+    diningFooter:'Sakura Railways | All prices include tax | Items subject to availability',
+    tabBreakfast:'Breakfast',tabLunch:'Lunch',tabDinner:'Dinner',
+    pickupDef:'-- Select pickup station --',dropoffDef:'-- Select drop-off station --',
+    bookingTitle:'Book a Journey',bookingSub:'Reserve your travel with Sakura Railways',
+    autoTitle:'Welcome to Sakura Railways',autoSub:'Create your account to book journeys and enjoy exclusive member benefits.',
+    autoSignup:'Create Account / Sign In',autoSkip:'Maybe Later',comingSoon:'Coming Soon!',
+    perPerson:'/person',totalLbl:'Total',passengerUnit:'passenger',
+    s_boarding:'Boarding',s_open:'Open',s_ontime:'On Time',s_delayed:'Delayed',
+    days:['Su','Mo','Tu','We','Th','Fr','Sa'],
+    months:['January','February','March','April','May','June','July','August','September','October','November','December']
+  }
+};
+
+function applyLang(){
+  const L=T[lang], $=id=>document.getElementById(id);
+  $('homeLink').textContent=L.home; $('fareLink').textContent=L.fare;
+  $('scheduleLink').textContent=L.schedule; $('diningLink').textContent=L.dining;
+  $('bookingLink').textContent=L.booking;
+  $('loginBtn').innerHTML=`<i class="bi bi-person"></i> ${L.login}`;
+  $('langBtn').textContent=L.langToggle; $('searchBox').placeholder=L.search;
+  $('helpLink').textContent=L.help; $('contactLink').textContent=L.contact; $('aboutLink').textContent=L.about;
+  $('tagline').textContent=L.tagline; $('welcomeTitle').textContent=L.welcomeTitle; $('welcomeDesc').textContent=L.welcomeDesc;
+  $('fareInput').placeholder=L.farePh; $('routeHeader').textContent=L.routeH;
+  $('fareHeader').textContent=L.fareH; $('studentHeader').textContent=L.studentH; $('pwdHeader').textContent=L.pwdH;
+  $('checkFareBtn').textContent=L.checkFare; $('fareFooter').textContent=L.fareFooter;
+  $('modalTitle').textContent=L.modalTitle; $('modalCursive').textContent=L.modalCursive;
+  $('profileLabel').textContent=L.profileLbl; $('termsLabel').textContent=L.termsLbl;
+  $('submitRegBtn').textContent=L.submitBtn; $('successTitle').textContent=L.successTitle;
+  $('successMsg').textContent=L.successMsg; $('successHomeBtn').textContent=L.successHomeBtn;
+  $('pickupLabel').textContent=L.pickupLbl; $('dropoffLabel').textContent=L.dropoffLbl;
+  $('dateLabel').textContent=L.dateLbl; $('passLabel').textContent=L.passLbl;
+  $('discountLabel').textContent=L.discLbl; $('discNone').textContent=L.discNone;
+  $('discStudent').textContent=L.discStudent; $('discPwd').textContent=L.discPwd;
+  $('bookBtn').textContent=L.bookBtn; $('bookNote').textContent=L.bookNote;
+  $('farePreview').textContent=L.farePreviewDef;
+  $('confirmTitle').textContent=L.confirmTitle; $('confirmBookBtn').textContent=L.confirmBook; $('cancelBookBtn').textContent=L.cancel;
+  $('schedTitle').textContent=L.schedTitle; $('colDepart').textContent=L.colDepart;
+  $('colRoute').textContent=L.colRoute; $('colStatus').textContent=L.colStatus;
+  $('mapTitle').textContent=L.mapTitle; $('mapSub').textContent=L.mapSub;
+  $('diningBadge').textContent=L.diningBadge; $('diningTitle').textContent=L.diningTitle;
+  $('diningSub').textContent=L.diningSub; $('diningFooter').textContent=L.diningFooter;
+  $('tabBreakfast').textContent=L.tabBreakfast; $('tabLunch').textContent=L.tabLunch; $('tabDinner').textContent=L.tabDinner;
+  $('pickupDefault').textContent=L.pickupDef; $('dropoffDefault').textContent=L.dropoffDef;
+  $('bookingTitle').textContent=L.bookingTitle; $('bookingSub').textContent=L.bookingSub;
+  $('autoTitle').textContent=L.autoTitle; $('autoSub').textContent=L.autoSub;
+  $('autoSignupBtn').textContent=L.autoSignup; $('autoSkipBtn').textContent=L.autoSkip;
+  ['s_boarding','s_open','s_ontime','s_delayed','s_open','s_ontime','s_open','s_boarding','s_open','s_ontime']
+    .forEach((k,i)=>{ const el=$('s'+(i+1)); if(el) el.textContent=L[k]; });
+  renderCalendar(currentMonth,currentYear);
+  renderCatTabs(); renderAll(); calcBookingFare(); showFare();
+}
+
+function toggleLanguage(){ lang=lang==='ja'?'en':'ja'; applyLang(); }
+function toggleMenu(){ document.getElementById('menu').classList.toggle('active'); }
+function comingSoon(){ alert(T[lang].comingSoon); }
+
+function showSection(id){
+  ['home','welcome-section','fare','schedule','map-section','dining','booking']
+    .forEach(s=>{ const el=document.getElementById(s); if(el) el.style.display='none'; });
+  if(id==='home'){ document.getElementById('home').style.display='flex'; document.getElementById('welcome-section').style.display='block'; }
+  else if(id==='schedule'){ document.getElementById('schedule').style.display='block'; document.getElementById('map-section').style.display='block'; }
+  else if(id==='fare'){ document.getElementById('fare').style.display='block'; showFare(); }
+  else if(id==='dining'){ document.getElementById('dining').style.display='block'; }
+  else if(id==='booking'){ document.getElementById('booking').style.display='block'; }
+}
+
+function showLoginModal(){
+  document.getElementById('regFormWrap').style.display='block';
+  document.getElementById('regSuccess').style.display='none';
+  new bootstrap.Modal(document.getElementById('loginModal')).show();
+}
+function afterRegistration(){
+  bootstrap.Modal.getInstance(document.getElementById('loginModal')).hide();
+  setTimeout(()=>showSection('home'),300);
+}
+
+let profileBox=document.getElementById('profilePreview'),imgEl,isDragging=false,startX,startY;
+document.getElementById('profileInput').addEventListener('change',e=>{
+  const reader=new FileReader();
+  reader.onload=()=>{ profileBox.innerHTML=`<img src="${reader.result}" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;">`; imgEl=profileBox.querySelector('img'); };
+  reader.readAsDataURL(e.target.files[0]);
+});
+profileBox.addEventListener('mousedown',e=>{ if(imgEl){isDragging=true;startX=e.clientX;startY=e.clientY;} });
+document.addEventListener('mouseup',()=>{ isDragging=false; });
+document.addEventListener('mousemove',e=>{
+  if(!isDragging||!imgEl) return;
+  imgEl.style.top=(parseInt(imgEl.style.top||0)+e.clientY-startY)+'px';
+  imgEl.style.left=(parseInt(imgEl.style.left||0)+e.clientX-startX)+'px';
+  startX=e.clientX; startY=e.clientY;
+});
+
+document.getElementById('registerForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const L=T[lang];
+  if(Number(document.getElementById('age').value)<18){alert(L.ageAlert);return;}
+  if(!document.getElementById('terms').checked){alert(L.termsAlert);return;}
+  document.getElementById('regFormWrap').style.display='none';
+  document.getElementById('regSuccess').style.display='block';
+  document.getElementById('loginBtn').innerHTML=`<i class="bi bi-person"></i> ${L.account}`;
+});
+
+const fares={
+  'Tokyo → Kyoto':{ja:'東京→京都',en:'Tokyo → Kyoto',price:450},
+  'Osaka → Hiroshima':{ja:'大阪→広島',en:'Osaka → Hiroshima',price:480},
+  'Kyoto → Nara':{ja:'京都→奈良',en:'Kyoto → Nara',price:400},
+  'Tokyo → Osaka':{ja:'東京→大阪',en:'Tokyo → Osaka',price:500},
+  'Hokkaido → Tokyo':{ja:'北海道→東京',en:'Hokkaido → Tokyo',price:550}
+};
+function showFare(){
+  const input=document.getElementById('fareInput').value.trim().toLowerCase();
+  const tbody=document.getElementById('fareOutput'); tbody.innerHTML=''; let found=false;
+  Object.values(fares).forEach(r=>{
+    const label=lang==='ja'?r.ja:r.en;
+    if(!input||label.toLowerCase().includes(input)){
+      tbody.innerHTML+=`<tr><td>${label}</td><td>¥${r.price}</td><td>¥${Math.round(r.price*.8)}</td><td>¥${Math.round(r.price*.5)}</td></tr>`;
+      found=true;
+    }
+  });
+  if(!found) tbody.innerHTML=`<tr><td colspan="4">${T[lang].noRoute}</td></tr>`;
+}
+
+const bookingFareMap={'東京_京都':450,'大阪_広島':480,'京都_奈良':400,'東京_大阪':500,'北海道_東京':550,'京都_東京':450,'広島_大阪':480,'奈良_京都':400,'大阪_東京':500,'東京_北海道':550};
+function calcBookingFare(){
+  const L=T[lang],pu=document.getElementById('pickupSelect').value,do_=document.getElementById('dropoffSelect').value;
+  const pax=parseInt(document.getElementById('numPassengers').value)||1,disc=document.getElementById('discountType').value;
+  const prev=document.getElementById('farePreview');
+  if(!pu||!do_){prev.textContent=L.farePreviewDef;return;}
+  if(pu===do_){prev.textContent=L.sameStation;return;}
+  const base=bookingFareMap[pu+'_'+do_]||bookingFareMap[do_+'_'+pu];
+  if(!base){prev.textContent=L.fareNA;return;}
+  let df=base,dl='';
+  if(disc==='student'){df=Math.round(base*.8);dl=lang==='ja'?' (学生20%割引)':' (Student 20% off)';}
+  if(disc==='pwd'){df=Math.round(base*.5);dl=lang==='ja'?' (PWD50%割引)':' (PWD 50% off)';}
+  const tot=df*pax;
+  const totStr=lang==='ja'?`${L.totalLbl}: ¥${tot} (${pax}${L.passengerUnit})`:`${L.totalLbl}: ¥${tot} (${pax} ${L.passengerUnit}${pax>1?'s':''})`;
+  prev.innerHTML=`¥${df}${L.perPerson}${dl}<br><strong>${totStr}</strong>`;
+}
+function confirmBooking(){
+  const L=T[lang],pu=document.getElementById('pickupSelect').value,do_=document.getElementById('dropoffSelect').value;
+  const date=document.getElementById('travelDate').value,pax=parseInt(document.getElementById('numPassengers').value)||1;
+  if(!pu||!do_){alert(L.selectSt);return;} if(!date){alert(L.selectDate);return;}
+  document.getElementById('confirmDetails').innerHTML=`
+    <p style="color:#555;font-size:15px;margin:6px 0;"><strong style="color:var(--pink-btn);">${L.from}:</strong> ${pu}</p>
+    <p style="color:#555;font-size:15px;margin:6px 0;"><strong style="color:var(--pink-btn);">${L.to}:</strong> ${do_}</p>
+    <p style="color:#555;font-size:15px;margin:6px 0;"><strong style="color:var(--pink-btn);">${L.date}:</strong> ${date}</p>
+    <p style="color:#555;font-size:15px;margin:6px 0;"><strong style="color:var(--pink-btn);">${L.pax}:</strong> ${pax}</p>
+    <div style="margin-top:12px;padding:14px;background:var(--pink-pale);border-radius:12px;text-align:center;color:var(--pink-btn);font-size:16px;">${document.getElementById('farePreview').innerHTML}</div>`;
+  new bootstrap.Modal(document.getElementById('confirmModal')).show();
+}
+
+let today=new Date(),currentMonth=today.getMonth(),currentYear=today.getFullYear();
+function renderCalendar(m,y){
+  const L=T[lang],label=lang==='ja'?`${y}年 ${L.months[m]}`:`${L.months[m]} ${y}`;
+  document.getElementById('monthYear').textContent=label;
+  const tbl=document.getElementById('calendarTable'); tbl.innerHTML='';
+  const hRow=document.createElement('tr');
+  L.days.forEach(d=>{const th=document.createElement('th');th.textContent=d;hRow.appendChild(th);});
+  tbl.appendChild(hRow);
+  const firstDay=new Date(y,m,1).getDay(),daysInMonth=new Date(y,m+1,0).getDate();
+  let date=1;
+  for(let i=0;i<6;i++){
+    const row=document.createElement('tr');
+    for(let j=0;j<7;j++){
+      const cell=document.createElement('td');
+      cell.textContent=(i===0&&j<firstDay)||date>daysInMonth?'':date++;
+      row.appendChild(cell);
+    }
+    tbl.appendChild(row);
+  }
+}
+document.getElementById('prevMonth').addEventListener('click',()=>{ if(--currentMonth<0){currentMonth=11;currentYear--;} renderCalendar(currentMonth,currentYear); });
+document.getElementById('nextMonth').addEventListener('click',()=>{ if(++currentMonth>11){currentMonth=0;currentYear++;} renderCalendar(currentMonth,currentYear); });
+
+setTimeout(()=>document.getElementById('autoPopup').classList.add('show'),5000);
+function closeAutoPopup(){ document.getElementById('autoPopup').classList.remove('show'); }
+function openFullLogin(){ closeAutoPopup(); setTimeout(showLoginModal,200); }
+
+const allMenu={
+  breakfast:[
+    {id:101,cat:'morning',name:'Tamagoyaki Set',ja:'たまごやきセット',price:520,desc:'Fluffy rolled egg omelette seasoned with dashi and mirin, served with miso soup, pickles, and steamed white rice.',ingredients:['Eggs','Dashi','Mirin','Soy Sauce','Steamed Rice','White Miso','Tofu','Wakame','Pickled Plum'],tags:['hot','veg'],allergen:'Contains: egg, soy'},
+    {id:102,cat:'morning',name:'Salmon Ochazuke',ja:'鮭お茶漬け',price:480,desc:'Flaked grilled salmon over warm rice, drowned in gentle green tea broth with crispy rice crackers and nori.',ingredients:['Steamed Rice','Grilled Salmon','Green Tea Broth','Nori','Sesame','Senbei Crackers','Pickled Ginger'],tags:['hot'],allergen:'Contains: fish, soy'},
+    {id:103,cat:'morning',name:'Natto Rice Bowl',ja:'納豆ご飯',price:350,desc:'Sticky fermented soybeans over hot rice with a runny egg, green onion, and a drizzle of soy sauce.',ingredients:['Steamed Rice','Natto','Soft-Boiled Egg','Green Onion','Soy Sauce','Karashi Mustard'],tags:['hot','veg'],allergen:'Contains: soy, egg'},
+    {id:104,cat:'pastry',name:'Sakura Milk Bread',ja:'さくら食パン',price:320,desc:'Cloud-soft Japanese milk bread with sakura butter and a swipe of strawberry jam — pillowy and perfumed.',ingredients:['Bread Flour','Whole Milk','Butter','Sugar','Eggs','Sakura Extract','Strawberry Jam'],tags:['sweet','veg'],allergen:'Contains: wheat, dairy, egg'},
+    {id:105,cat:'pastry',name:'Matcha Croissant',ja:'抹茶クロワッサン',price:380,desc:'Laminated butter croissant swirled with ceremonial matcha paste and dusted with icing sugar.',ingredients:['Bread Flour','Cultured Butter','Ceremonial Matcha','Sugar','Eggs','Icing Sugar'],tags:['sweet','new'],allergen:'Contains: wheat, dairy, egg'},
+    {id:106,cat:'morning',name:'Miso Soup',ja:'お味噌汁',price:180,desc:'A simple, deeply comforting bowl of white miso with silken tofu, wakame, and fresh green onion.',ingredients:['White Miso','Dashi','Silken Tofu','Wakame','Green Onion'],tags:['hot','veg'],allergen:'Contains: soy'},
+    {id:107,cat:'drink-b',name:'Warm Hojicha',ja:'ほうじ茶',price:200,desc:'Roasted green tea with a nutty, caramel warmth — low in caffeine, deeply soothing.',ingredients:['Roasted Hojicha Leaves','Hot Water'],tags:['hot','veg'],allergen:'None'},
+    {id:108,cat:'drink-b',name:'Morning Yuzu Juice',ja:'ゆずジュース',price:220,desc:'Freshly squeezed yuzu blended with honey and a splash of sparkling water — bright and citrusy.',ingredients:['Yuzu','Honey','Sparkling Water','Lemon'],tags:['cold','veg'],allergen:'None'},
+    {id:109,cat:'drink-b',name:'Sakura Latte',ja:'さくらラテ',price:290,desc:'Steamed oat milk with a gentle swirl of sakura syrup and vanilla — soft, floral, and pink.',ingredients:['Oat Milk','Sakura Syrup','Vanilla','Pink Hibiscus Dust'],tags:['hot','sweet'],allergen:'Contains: oats'},
+  ],
+  lunch:[
+    {id:201,cat:'main',name:'Bento Box',ja:'駅弁',price:850,desc:'A classic railway bento with grilled salmon in teriyaki, hand-rolled tamagoyaki, pickled daikon, and seasoned rice in a lacquered box.',ingredients:['Steamed Rice','Grilled Salmon','Teriyaki Glaze','Tamagoyaki','Pickled Daikon','Edamame','Nori','Umeboshi','Sesame Salt'],tags:['hot'],allergen:'Contains: fish, egg, soy'},
+    {id:202,cat:'main',name:'Tonkotsu Ramen',ja:'とんこつラーメン',price:720,desc:'12-hour simmered pork bone broth, springy noodles, melt-in-mouth chashu, a soft jammy egg — rich, creamy, deeply satisfying.',ingredients:['Wheat Noodles','Pork Bone Broth','Chashu Pork','Soft-Boiled Egg','Nori','Green Onion','Bamboo Shoots','Black Garlic Oil'],tags:['hot'],allergen:'Contains: wheat, egg, pork, soy'},
+    {id:203,cat:'main',name:'Premium Sushi Set',ja:'特上寿司セット',price:1200,desc:'Hand-pressed nigiri of bluefin tuna and salmon, crispy avocado maki, and ebi nigiri — chilled at peak freshness.',ingredients:['Sushi Rice','Bluefin Tuna','Atlantic Salmon','Shrimp','Avocado','Nori','Wasabi','Pickled Ginger','Soy Sauce'],tags:['cold'],allergen:'Contains: fish, shellfish, soy, sesame'},
+    {id:204,cat:'main',name:'Egg Salad Sandwich',ja:'たまごサンド',price:480,desc:'Pillowy Japanese milk bread with thick, creamy free-range egg salad — simple, perfect, iconic.',ingredients:['Milk Bread','Free-Range Eggs','Japanese Mayonnaise','Cucumber','Lettuce','Dijon Mustard'],tags:['cold','veg'],allergen:'Contains: wheat, egg, dairy'},
+    {id:205,cat:'snack-l',name:'Takoyaki Bites',ja:'たこ焼き',price:380,desc:'Golden crispy balls hiding molten tender octopus — finished with tangy sauce, kewpie mayo, and bonito flakes.',ingredients:['Wheat Flour','Dashi','Octopus','Green Onion','Takoyaki Sauce','Kewpie Mayo','Bonito Flakes','Aonori'],tags:['hot','new'],allergen:'Contains: wheat, shellfish, egg, soy, fish'},
+    {id:206,cat:'snack-l',name:'Dubai Chewy Cookie',ja:'ドバイクッキー',price:520,desc:'Thick brown butter cookie loaded with pistachio cream and crispy kataifi pastry, drizzled with rose water chocolate.',ingredients:['Brown Butter','Brown Sugar','Flour','Pistachio Paste','Kataifi Pastry','White Chocolate','Rose Water','Cardamom','Sea Salt'],tags:['sweet','new','sig'],allergen:'Contains: wheat, dairy, egg, tree nuts'},
+    {id:207,cat:'sweet-l',name:'Sakura Chiffon Cake',ja:'桜シフォンケーキ',price:400,desc:'Featherlight chiffon soaked in sakura syrup, layered with salted cherry blossom cream — floral and ethereal.',ingredients:['Cake Flour','Eggs','Sugar','Sakura Extract','Heavy Cream','Sea Salt','Vanilla Bean'],tags:['sweet','new'],allergen:'Contains: wheat, egg, dairy'},
+    {id:208,cat:'sweet-l',name:'Caramel Custard Pudding',ja:'なめらかプリン',price:320,desc:'Silky steamed custard crowned with a dark bittersweet caramel that pools like liquid gold.',ingredients:['Whole Eggs','Full-Fat Milk','Heavy Cream','Sugar','Vanilla Pod','Dark Caramel'],tags:['sweet','cold'],allergen:'Contains: egg, dairy'},
+    {id:209,cat:'drink-l',name:'Ceremonial Matcha',ja:'抹茶',price:250,desc:'Vibrant ceremonial matcha whisked to a velvety froth — clean, grassy, calming.',ingredients:['Ceremonial Matcha Powder','Soft Water 75°C'],tags:['hot','veg'],allergen:'None'},
+    {id:210,cat:'drink-l',name:'Sakura Rose Latte',ja:'さくらラテ',price:290,desc:'Silky oat milk with double espresso, sakura syrup and rose water — delicate, warm, prettily pink.',ingredients:['Oat Milk','Double Espresso','Sakura Syrup','Rose Water','Vanilla'],tags:['hot','sweet','new'],allergen:'Contains: oats'},
+  ],
+  dinner:[
+    {id:301,cat:'dinner-main',name:'Wagyu Sukiyaki',ja:'和牛すき焼き',price:2800,desc:'Tender A5 wagyu beef simmered in sweet soy and mirin broth with tofu, enoki, napa cabbage and glass noodles — luxurious and warming.',ingredients:['A5 Wagyu Beef','Firm Tofu','Enoki Mushrooms','Napa Cabbage','Glass Noodles','Shiitake','Soy Sauce','Mirin','Sake','Egg'],tags:['hot','sig'],allergen:'Contains: soy, egg'},
+    {id:302,cat:'dinner-main',name:'Grilled Black Cod',ja:'銀だらの西京焼き',price:1800,desc:'Miso-marinated black cod glazed to a caramelised finish, served with yuzu-dressed daikon and steamed koshihikari rice.',ingredients:['Black Cod','White Miso','Mirin','Sake','Sugar','Yuzu Zest','Daikon','Koshihikari Rice'],tags:['hot'],allergen:'Contains: fish, soy'},
+    {id:303,cat:'dinner-main',name:'Lobster Chawanmushi',ja:'伊勢海老茶碗蒸し',price:1600,desc:'Silky steamed egg custard set in dashi with a whole lobster tail, gingko nuts, mitsuba herb, and golden dashi jelly.',ingredients:['Eggs','Dashi','Soy Sauce','Mirin','Lobster Tail','Gingko Nuts','Mitsuba','Dashi Jelly'],tags:['hot','sig'],allergen:'Contains: egg, shellfish, soy'},
+    {id:304,cat:'dinner-main',name:'Kaiseki Course',ja:'懐石ご飯コース',price:3500,desc:'A refined kaiseki-inspired set: seasonal sashimi, grilled fish, simmered vegetables, tofu dengaku, miso soup and hand-pressed rice.',ingredients:['Seasonal Sashimi','Grilled Barramundi','Simmered Kabocha','Tofu Dengaku','Daikon','Miso','Koshihikari Rice','Pickles'],tags:['hot','new','sig'],allergen:'Contains: fish, soy, egg'},
+    {id:305,cat:'snack-d',name:'Edamame & Pickles',ja:'枝豆とお漬け物',price:280,desc:'Lightly salted steamed edamame and a rotating selection of seasonal Japanese pickles — the perfect palate opener.',ingredients:['Edamame','Sea Salt','Pickled Cucumber','Pickled Daikon','Pickled Ginger'],tags:['cold','veg'],allergen:'Contains: soy'},
+    {id:306,cat:'snack-d',name:'Salmon Tartare Crostini',ja:'サーモンタルタル',price:520,desc:'Finely diced salmon with yuzu kosho, micro shiso and toasted sesame on crispy nori crostini — clean, bright, elegant.',ingredients:['Atlantic Salmon','Yuzu Kosho','Micro Shiso','Toasted Sesame','Nori Crostini','Soy Sauce'],tags:['cold','new'],allergen:'Contains: fish, sesame, soy'},
+    {id:307,cat:'sweet-d',name:'Matcha Tiramisu',ja:'抹茶ティラミス',price:680,desc:'Espresso-soaked ladyfingers layered with ceremonial matcha mascarpone, dusted with dark matcha powder.',ingredients:['Ladyfingers','Mascarpone','Ceremonial Matcha','Espresso','Sugar','Heavy Cream','Dark Matcha Powder'],tags:['sweet','cold','new'],allergen:'Contains: wheat, dairy, egg'},
+    {id:308,cat:'sweet-d',name:'Sakura Mochi Ice Cream',ja:'さくら餅アイス',price:480,desc:'Hand-pounded mochi shell wrapping a scoop of sakura and white chocolate ice cream — soft, bouncy, and floral.',ingredients:['Mochi Rice','Sakura Extract','White Chocolate Ice Cream','Red Bean Paste','Potato Starch'],tags:['sweet','cold'],allergen:'Contains: dairy'},
+    {id:309,cat:'drink-d',name:'Sake Flight',ja:'日本酒フライト',price:980,desc:'Three curated cups: a dry junmai, a floral ginjo, and a rich junmai daiginjo — tasting notes included.',ingredients:['Junmai Sake','Ginjo Sake','Junmai Daiginjo'],tags:['cold'],allergen:'Contains: alcohol'},
+    {id:310,cat:'drink-d',name:'Yuzu Gin Tonic',ja:'ゆずジントニック',price:620,desc:'Japanese craft gin with fresh yuzu juice, premium tonic, a ribbon of yuzu peel, and cherry blossom ice.',ingredients:['Japanese Craft Gin','Yuzu Juice','Premium Tonic','Yuzu Peel','Cherry Blossom Ice'],tags:['cold','new'],allergen:'Contains: alcohol'},
+    {id:311,cat:'drink-d',name:'Hojicha Old Fashioned',ja:'ほうじ茶オールドファッション',price:650,desc:'Bourbon steeped in roasted hojicha, sweetened with black sugar syrup, garnished with a charred orange slice.',ingredients:['Bourbon','Hojicha Syrup','Black Sugar','Angostura Bitters','Charred Orange'],tags:['hot','sig'],allergen:'Contains: alcohol'},
+  ]
+};
+
+const periodSections={
+  breakfast:[{key:'morning',en:'Morning Plates',ja:'朝のお皿',col:'left'},{key:'pastry',en:'Pastries',ja:'ペストリー',col:'right'},{key:'drink-b',en:'Drinks',ja:'ドリンク',col:'right'}],
+  lunch:[{key:'main',en:'Mains',ja:'メイン',col:'left'},{key:'snack-l',en:'Snacks',ja:'スナック',col:'right'},{key:'sweet-l',en:'Sweets',ja:'スイーツ',col:'right'},{key:'drink-l',en:'Drinks',ja:'ドリンク',col:'right'}],
+  dinner:[{key:'dinner-main',en:'Dinner Mains',ja:'夕食メイン',col:'left'},{key:'snack-d',en:'Starters',ja:'前菜',col:'right'},{key:'sweet-d',en:'Desserts',ja:'デザート',col:'right'},{key:'drink-d',en:'Drinks & Bar',ja:'ドリンク&バー',col:'right'}]
+};
+const periodCats={
+  breakfast:[{key:'all',en:'All',ja:'すべて'},{key:'morning',en:'Morning Plates',ja:'朝のお皿'},{key:'pastry',en:'Pastries',ja:'ペストリー'},{key:'drink-b',en:'Drinks',ja:'ドリンク'}],
+  lunch:[{key:'all',en:'All',ja:'すべて'},{key:'main',en:'Mains',ja:'メイン'},{key:'snack-l',en:'Snacks',ja:'スナック'},{key:'sweet-l',en:'Sweets',ja:'スイーツ'},{key:'drink-l',en:'Drinks',ja:'ドリンク'}],
+  dinner:[{key:'all',en:'All',ja:'すべて'},{key:'dinner-main',en:'Dinner Mains',ja:'夕食メイン'},{key:'snack-d',en:'Starters',ja:'前菜'},{key:'sweet-d',en:'Desserts',ja:'デザート'},{key:'drink-d',en:'Drinks & Bar',ja:'ドリンク'}]
+};
+const tagLabels={hot:{cls:'tag-hot',txt:'Hot'},cold:{cls:'tag-cold',txt:'Cold'},veg:{cls:'tag-veg',txt:'Veg'},sweet:{cls:'tag-sweet',txt:'Sweet'},new:{cls:'tag-new',txt:'New'},sig:{cls:'tag-sig',txt:'Signature'}};
+let currentPeriod='breakfast',currentCat='all';
+
+function switchPeriod(period,btn){
+  currentPeriod=period; currentCat='all';
+  document.querySelectorAll('.period-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active'); renderCatTabs(); renderAll();
+}
+function renderCatTabs(){
+  const tabs=document.getElementById('catTabs'); tabs.innerHTML='';
+  periodCats[currentPeriod].forEach(c=>{
+    const btn=document.createElement('button');
+    btn.className='cat-tab'+(c.key===currentCat?' active':'');
+    btn.textContent=lang==='ja'?c.ja:c.en;
+    btn.onclick=()=>filterCat(c.key,btn); tabs.appendChild(btn);
+  });
+}
+function renderAll(){
+  const left=document.getElementById('leftCol'),right=document.getElementById('rightCol');
+  left.innerHTML=''; right.innerHTML='';
+  periodSections[currentPeriod].forEach(sec=>{
+    const secItems=allMenu[currentPeriod].filter(m=>m.cat===sec.key);
+    if(!secItems.length) return;
+    const section=document.createElement('div');
+    section.className='menu-section'; section.dataset.cat=sec.key;
+    let html=`<div class="section-title">${lang==='ja'?sec.ja:sec.en}</div>`;
+    secItems.forEach(item=>{
+      const tagHtml=item.tags.map(tg=>`<span class="tag ${tagLabels[tg].cls}">${tagLabels[tg].txt}</span>`).join('');
+      const hidden=(currentCat!=='all'&&currentCat!==item.cat)?'hidden':'';
+      if(item.tags.includes('sig')){
+        html+=`<div class="item-row ${hidden}" onclick="openItemModal(${item.id})"><div class="special-frame"><div class="item-top"><span class="item-name">${item.name}</span><span class="item-price">¥${item.price}</span></div><div class="item-ja">${item.ja}</div><div class="item-desc">${item.desc.substring(0,72)}...</div><div class="item-tags">${tagHtml}</div></div></div>`;
+      } else {
+        html+=`<div class="item-row ${hidden}" onclick="openItemModal(${item.id})"><div class="item-top"><span class="item-name">${item.name}</span><span class="item-price">¥${item.price}</span></div><div class="item-ja">${item.ja}</div><div class="item-desc">${item.desc.substring(0,70)}...</div><div class="item-tags">${tagHtml}</div></div>`;
+      }
+    });
+    section.innerHTML=html;
+    (sec.col==='left'?left:right).appendChild(section);
+  });
+}
+function filterCat(cat,btn){
+  currentCat=cat;
+  document.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.item-row').forEach(row=>{
+    const rc=row.closest('.menu-section')?.dataset.cat||'';
+    (cat==='all'||cat===rc)?row.classList.remove('hidden'):row.classList.add('hidden');
+  });
+}
+function openItemModal(id){
+  const all=[...allMenu.breakfast,...allMenu.lunch,...allMenu.dinner];
+  const item=all.find(m=>m.id===id);
+  document.getElementById('mTitle').textContent=item.name;
+  document.getElementById('mJa').textContent=item.ja;
+  document.getElementById('mPrice').textContent='¥'+item.price;
+  document.getElementById('mDesc').textContent=item.desc;
+  document.getElementById('mAllergen').textContent='Allergens: '+item.allergen;
+  document.getElementById('mIngredients').innerHTML=item.ingredients.map(i=>`<span class="ing-chip">${i}</span>`).join('');
+  document.getElementById('mTags').innerHTML=item.tags.map(tg=>`<span class="tag ${tagLabels[tg].cls}">${tagLabels[tg].txt}</span>`).join('');
+  document.getElementById('ingOverlay').classList.add('show');
+}
+function closeOverlay(e){ if(e.target===document.getElementById('ingOverlay')) document.getElementById('ingOverlay').classList.remove('show'); }
+function closeModalBtn(){ document.getElementById('ingOverlay').classList.remove('show'); }
+
+showSection('home');
+renderCalendar(currentMonth,currentYear);
+showFare(); renderCatTabs(); renderAll(); applyLang();
+</script>
+</body>
+</html>
